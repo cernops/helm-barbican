@@ -1,0 +1,10 @@
+name: "cern"
+version: "0.1.0"
+usage: ""
+description: |-
+  This plugin provides CERN specific functionality.
+  usage:
+    $ helm cern ...
+ignoreFlags: false
+useTunnel: false
+command: "$HELM_PLUGIN_DIR/cern"
