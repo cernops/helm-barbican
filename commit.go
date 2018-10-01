@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ var commitCmd = &cobra.Command{
 	the given project`,
 	Args: cobra.MinimumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("commit called with %v", args)
+		fmt.Printf("commit called with %v\n", args)
 	},
 }
 
