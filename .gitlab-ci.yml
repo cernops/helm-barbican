@@ -1,0 +1,11 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image: golang
+  script:
+    - go build .
+    - go test -coverprofile=cover.out .
+    - go tool cover -func=cover.out
