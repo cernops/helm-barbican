@@ -1,4 +1,4 @@
-module gitlab.cern.ch/helm/plugins/cern
+module gitlab.cern.ch/helm/plugins/barbican
 
 require (
 	github.com/gophercloud/gophercloud v0.0.0-20180928224355-bfc006765209

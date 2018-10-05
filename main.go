@@ -13,9 +13,11 @@ func main() {
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "cern",
-	Short: "Helm manager at CERN",
-	Long:  `Handling of secrets and deployments at CERN`,
+	Use:   "secrets",
+	Short: "Secret handling using barbican",
+	Long: `Secret handling using OpenStack Barbican.
+	Secrets are stored encrypted in local files, with the key being stored in
+	Barbican. These files can be safely committed to version control.`,
 }
 
 var Debug bool
@@ -35,8 +37,7 @@ func Execute() {
 func init() {
 	RootCmd.PersistentFlags().BoolVarP(&Debug, "debug", "D", false, "Output debug info")
 	RootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "Increase verbosity")
-	RootCmd.PersistentFlags().StringVarP(&Deployment, "deployment", "d", "", "Destination deployment for this value")
-	RootCmd.PersistentFlags().StringVarP(&SecretsFile, "secret-file", "s", "secrets.yaml", "Secrets file to encrypt/decrypt")
+	RootCmd.PersistentFlags().StringVarP(&SecretsFile, "secret-file", "s", "secrets.yaml", "Secrets file to manage")
 
 	log.SetFormatter(&log.TextFormatter{DisableTimestamp: true})
 	log.SetOutput(os.Stdout)

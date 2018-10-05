@@ -1,10 +1,11 @@
-name: "cern"
+name: "secrets"
 version: "0.1.0"
-usage: "manage cern secrets and deployments"
+usage: "manage secrets using openstack barbican"
 description: |-
-  Manage CERN secrets and deployments
+  Manage secrets stored in yaml files. The encryption keys are stored in
+  OpenStack Barbican, so available tokens are required for interaction.
   usage:
-    $ helm cern [command]
+    $ helm secrets [command]
 ignoreFlags: false
 useTunnel: false
-command: "$HELM_PLUGIN_DIR/cern"
+command: "$HELM_PLUGIN_DIR/barbican"

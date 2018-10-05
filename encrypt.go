@@ -15,12 +15,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// encryptCmd represents the hello command
+// encryptCmd represents the 'enc' command.
 var encryptCmd = &cobra.Command{
 	Use:   "enc",
-	Short: "encrypt deployment secrets",
-	Long:  `This command `,
-	Args:  cobra.ExactArgs(0),
+	Short: "encrypt secrets with barbican key",
+	Long: `This command encrypts the contents of a given secrets yaml file.
+	The resulting file can then be safely committed to version control.
+	This is a low level command which most times is not required, with
+	'view' and 'edit' being preferred.`,
+	Args: cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		content, err := ioutil.ReadFile(SecretsFile)
 		if err != nil {
@@ -48,12 +51,14 @@ var encryptCmd = &cobra.Command{
 	},
 }
 
-// decryptCmd represents the hello command
+// decryptCmd represents the 'dec' command
 var decryptCmd = &cobra.Command{
 	Use:   "dec",
-	Short: "decrypt deployment secrets",
-	Long:  `This command `,
-	Args:  cobra.ExactArgs(0),
+	Short: "decrypt secrets with barbican key",
+	Long: `This command decrypts the contents of a given secrets yaml file.
+	This is a low level command which most times is not required, with 'view'
+	and 'edit' being preferred.`,
+	Args: cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		content, err := ioutil.ReadFile(SecretsFile)
 		if err != nil {
@@ -81,12 +86,13 @@ var decryptCmd = &cobra.Command{
 	},
 }
 
-// viewCmd
+// viewCmd represents the 'view' command.
 var viewCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view deployment secrets",
-	Long:  `This command `,
-	Args:  cobra.ExactArgs(0),
+	Short: "decrypt and display secrets",
+	Long: `This command decrypts the contents of a given secrets yaml file,
+	and displays them in stdout. The contents are never stored unencrypted.`,
+	Args: cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		content, err := ioutil.ReadFile(SecretsFile)
 		if err != nil {
@@ -113,9 +119,11 @@ var viewCmd = &cobra.Command{
 // editCmd
 var editCmd = &cobra.Command{
 	Use:   "edit",
-	Short: "edit deployment secrets",
-	Long:  `This command`,
-	Args:  cobra.ExactArgs(0),
+	Short: "edit secrets",
+	Long: `This command launches the system configured editor with the
+	contents of a given secrets yaml file. The contents are decrypted for
+	editing and encrypted on exit.`,
+	Args: cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := newKeyManager()
 		if err != nil {

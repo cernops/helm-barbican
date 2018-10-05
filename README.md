@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-$ helm plugin install https://gitlab.cern.ch/helm/plugins/cern
+$ helm plugin install https://gitlab.cern.ch/helm/plugins/barbican
 ```
 
 ## Secrets
@@ -19,12 +19,12 @@ $ unset OS_IDENTITY_PROVIDER OS_AUTH_TYPE OS_MUTUAL_AUTH OS_PROTOCOL
 Typical usage will be 'edit' to change your secrets and 'view' to display them.
 
 ```
-$ helm cern edit
+$ helm secrets edit
 param1:
   subparam2: value2
   subparam3: value3
 
-$ helm cern view
+$ helm secrets view
 param1:
   subparam2: value2
   subparam3: value3
