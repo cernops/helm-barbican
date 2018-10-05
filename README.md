@@ -8,7 +8,7 @@ $ helm plugin install https://gitlab.cern.ch/helm/plugins/barbican
 
 ## Secrets
 
-Barbican is used for secret storage, first step it to get an openstack token.
+Barbican is used for secret storage, first step is to get an openstack token.
 
 ```bash
 $ export OS_TOKEN=$(openstack token issue -c id -f value)
