@@ -1,4 +1,4 @@
-# Helm Deployment and Secrets Manager
+# Helm Barbican Secrets Plugin
 
 ## Installation
 
