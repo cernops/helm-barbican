@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -37,7 +39,7 @@ var encryptCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("could not init client :: %v", err)
 		}
-		key, nonce, err := fetchKey(client, Deployment)
+		key, nonce, err := fetchKey(client, deploymentName())
 		if err != nil {
 			log.Fatalf("could not fetch key : %v", err)
 		}
@@ -71,7 +73,7 @@ var decryptCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("could not init client :: %v", err)
 		}
-		key, nonce, err := fetchKey(client, Deployment)
+		key, nonce, err := fetchKey(client, deploymentName())
 		if err != nil {
 			log.Fatalf("could not get key : %v", err)
 		}
@@ -103,7 +105,7 @@ var viewCmd = &cobra.Command{
 			if err != nil {
 				log.Fatalf("could not init client :: %v", err)
 			}
-			key, nonce, err := fetchKey(client, Deployment)
+			key, nonce, err := fetchKey(client, deploymentName())
 			if err != nil {
 				log.Fatalf("could not get key :: %v", err)
 			}
@@ -129,7 +131,7 @@ var editCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("could not init client :: %v", err)
 		}
-		key, nonce, err := fetchKey(client, Deployment)
+		key, nonce, err := fetchKey(client, deploymentName())
 		if err != nil {
 			log.Fatalf("could not fetch key : %v", err)
 		}
@@ -225,6 +227,14 @@ func b64Encoded(content string) bool {
 		return true
 	}
 	return false
+}
+
+func deploymentName() string {
+	if Deployment != "" {
+		return Deployment
+	}
+	d, _ := os.Getwd()
+	return filepath.Base(d)
 }
 
 func init() {

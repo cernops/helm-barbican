@@ -32,3 +32,16 @@ param1:
 
 Commands `enc` and `dec` offer lower level functionality to encode and decode
 the secrets.yaml file, but you should not usually need them.
+
+
+## Development
+
+The plugin is a go binary. It requires go>=1.11 (no vendor or GOPATH needed).
+```
+go build .
+```
+
+To reinstall the plugin locally for testing:
+```
+helm plugin remove secrets; helm plugin install `pwd`
+```

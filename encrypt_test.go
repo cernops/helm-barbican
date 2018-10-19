@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -95,6 +96,15 @@ func TestDecrypt(t *testing.T) {
 		}
 	}
 
+}
+
+func TestDeploymentName(t *testing.T) {
+	fullwd, _ := os.Getwd()
+	wd := filepath.Base(fullwd)
+	r := deploymentName()
+	if r != wd {
+		t.Fatalf("'%v' does not match expected '%v'", r, wd)
+	}
 }
 
 func Example_encrypt() {

@@ -38,6 +38,7 @@ func init() {
 	RootCmd.PersistentFlags().BoolVarP(&Debug, "debug", "D", false, "Output debug info")
 	RootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "Increase verbosity")
 	RootCmd.PersistentFlags().StringVarP(&SecretsFile, "secret-file", "s", "secrets.yaml", "Secrets file to manage")
+	RootCmd.PersistentFlags().StringVarP(&Deployment, "deployment", "d", "", "Deployment name used to manage key")
 
 	log.SetFormatter(&log.TextFormatter{DisableTimestamp: true})
 	log.SetOutput(os.Stdout)
