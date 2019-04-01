@@ -1,5 +1,7 @@
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=
+github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/gophercloud/gophercloud v0.0.0-20180928224355-bfc006765209 h1:Igqoa3ygx1DDGnGsbkKcXwwZt0jzCAbWsFfzIFYLP34=
 github.com/gophercloud/gophercloud v0.0.0-20180928224355-bfc006765209/go.mod h1:3WdhXV3rUYy9p6AUW8d94kr+HS62Y4VL9mBnFxsD8q4=
 github.com/gophercloud/utils v0.0.0-20180824015205-48f1dffa8dcd h1:7aZhLUvZLT7/Psa8L0CXMRHAP8I3BTUM2ganFPODPZ8=

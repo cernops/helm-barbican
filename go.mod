@@ -1,6 +1,7 @@
 module gitlab.cern.ch/helm/plugins/barbican
 
 require (
+	github.com/google/uuid v1.1.1
 	github.com/gophercloud/gophercloud v0.0.0-20180928224355-bfc006765209
 	github.com/gophercloud/utils v0.0.0-20180824015205-48f1dffa8dcd
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect

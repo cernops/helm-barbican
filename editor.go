@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -51,8 +54,13 @@ func (e Editor) Launch(path string) error {
 	return nil
 }
 
-func (e Editor) LaunchTemp(prefix string, suffix string, r io.Reader) ([]byte, string, error) {
-	f, err := ioutil.TempFile("", "")
+func (e Editor) LaunchTemp(r io.Reader) ([]byte, string, error) {
+	uuid, err := uuid.NewRandom()
+	if err != nil {
+		return []byte{}, "", err
+	}
+	tmpf := fmt.Sprintf("/dev/shm/%v", uuid)
+	f, err := os.OpenFile(tmpf, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
 		return nil, "", err
 	}
@@ -65,4 +73,10 @@ func (e Editor) LaunchTemp(prefix string, suffix string, r io.Reader) ([]byte, s
 	}
 	bytes, err := ioutil.ReadFile(f.Name())
 	return bytes, f.Name(), err
+}
+
+func randomString(n int) string {
+	b := make([]byte, 8)
+	_, _ = rand.Read(b)
+	return string(b)
 }

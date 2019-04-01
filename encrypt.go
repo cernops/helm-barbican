@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
+    "strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -147,11 +147,17 @@ var editCmd = &cobra.Command{
 		}
 		ed, err := NewEditor()
 		if err != nil {
-			log.Fatalf("failed to launch editor : %v", err)
+			log.Fatalf("failed to find editor %v", err)
 		}
-		result, _, err := ed.LaunchTemp("ppp", "sss", strings.NewReader(string(content)))
+		result, _, err := ed.LaunchTemp(strings.NewReader(string(content)))
+		if err != nil {
+			log.Fatalf("failed to open tmp file : %v", err)
+		}
 		encrypted, err := encrypt(key, nonce, result)
-		err = ioutil.WriteFile(SecretsFile, encrypted, 0644)
+		if err != nil {
+			log.Fatalf("failed to encrypt contents : %v", err)
+		}
+		err = ioutil.WriteFile(SecretsFile, encrypted, 0600)
 		if err != nil {
 			log.Fatalf("failed to encrypt : %v", err)
 		}
