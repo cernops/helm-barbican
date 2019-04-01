@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"path/filepath"
+	"strings"
 )
 
 const (
@@ -17,21 +17,26 @@ type Editor struct {
 	Binary string
 }
 
-func NewEditor() Editor {
+func NewEditor() (Editor, error) {
 	bin := os.Getenv("EDITOR")
 	if bin == "" {
 		bin = DefaultEditor
+	} else {
+		elems := strings.Fields(bin)
+		if len(elems) > 0 {
+			bin = elems[0]
+		}
 	}
-	return Editor{Binary: bin}
+
+	path, err := exec.LookPath(bin)
+	if err != nil {
+		return Editor{Binary: bin}, err
+	}
+	return Editor{Binary: path}, nil
 }
 
 func (e Editor) Launch(path string) error {
-	abs, err := filepath.Abs(path)
-	if err != nil {
-		return err
-	}
-
-	cmd := exec.Command(e.Binary, abs)
+	cmd := exec.Command(e.Binary, path)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin

@@ -145,7 +145,10 @@ var editCmd = &cobra.Command{
 				log.Fatalf("decrypt failed : %v", err)
 			}
 		}
-		ed := NewEditor()
+		ed, err := NewEditor()
+		if err != nil {
+			log.Fatalf("failed to launch editor : %v", err)
+		}
 		result, _, err := ed.LaunchTemp("ppp", "sss", strings.NewReader(string(content)))
 		encrypted, err := encrypt(key, nonce, result)
 		err = ioutil.WriteFile(SecretsFile, encrypted, 0644)
