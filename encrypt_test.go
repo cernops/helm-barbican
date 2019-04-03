@@ -98,10 +98,10 @@ func TestDecrypt(t *testing.T) {
 
 }
 
-func TestDeploymentName(t *testing.T) {
+func TestReleaseName(t *testing.T) {
 	fullwd, _ := os.Getwd()
 	wd := filepath.Base(fullwd)
-	r := deploymentName()
+	r := releaseName()
 	if r != wd {
 		t.Fatalf("'%v' does not match expected '%v'", r, wd)
 	}

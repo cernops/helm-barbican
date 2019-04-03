@@ -99,7 +99,7 @@ func decryptSecrets(args []string) ([]string, []string, error) {
 				if err != nil {
 					return helmArgs, decryptedFiles, err
 				}
-				key, nonce, err := fetchKey(client, deploymentName())
+				key, nonce, err := fetchKey(client, releaseName())
 				if err != nil {
 					return helmArgs, decryptedFiles, err
 				}

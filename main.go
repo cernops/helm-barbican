@@ -22,8 +22,7 @@ var RootCmd = &cobra.Command{
 
 var Debug bool
 var Verbose bool
-var Deployment string
-var SecretsFile string
+var Release string
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
@@ -35,10 +34,8 @@ func Execute() {
 }
 
 func init() {
-	RootCmd.PersistentFlags().BoolVarP(&Debug, "debug", "D", false, "Output debug info")
-	RootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "Increase verbosity")
-	RootCmd.PersistentFlags().StringVarP(&SecretsFile, "secret-file", "s", "secrets.yaml", "Secrets file to manage")
-	RootCmd.PersistentFlags().StringVarP(&Deployment, "deployment", "d", "", "Deployment name used to manage key")
+	RootCmd.PersistentFlags().BoolVarP(&Debug, "debug", "", false, "enable verbose output")
+	RootCmd.PersistentFlags().StringVarP(&Release, "name", "n", "", "release name - if unspecified, the current directory name")
 
 	log.SetFormatter(&log.TextFormatter{DisableTimestamp: true})
 	log.SetOutput(os.Stdout)

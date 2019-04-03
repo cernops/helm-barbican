@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-$ helm plugin install https://gitlab.cern.ch/helm/plugins/barbican
+$ helm plugin install https://github.com/cernops/helm-barbican
 ```
 
 ## Secrets
@@ -11,35 +11,35 @@ $ helm plugin install https://gitlab.cern.ch/helm/plugins/barbican
 Barbican is used for secret storage, first step is to get an openstack token.
 
 ```bash
-$ export OS_TOKEN=$(openstack token issue -c id -f value)
-$ export OS_AUTH_URL=https://keystone.cern.ch/v3
-$ unset OS_IDENTITY_PROVIDER OS_AUTH_TYPE OS_MUTUAL_AUTH OS_PROTOCOL
+export OS_TOKEN=$(openstack token issue -c id -f value)
+export OS_AUTH_URL=https://keystone.cern.ch/v3
+unset OS_IDENTITY_PROVIDER OS_AUTH_TYPE OS_MUTUAL_AUTH OS_PROTOCOL
 ```
 
 Typical usage will be `edit` to change your secrets and `view` to display them.
 
 ```
-$ helm secrets edit secrets.yaml
+helm secrets edit secrets.yaml
 param1:
   subparam2: value2
   subparam3: value3
 
-$ helm secrets view secrets.yaml
+helm secrets view secrets.yaml
 param1:
   subparam2: value2
   subparam3: value3
 ```
 
-The plugin provides wrapper commands for `install`, `upgrade` and `lint` and
-handles the secrets transparently - they are decrypted into shared memory and
-passed to helm being deleted right after.
+The plugin provides wrapper commands for helm `install`, `upgrade` and `lint`
+and handles the secrets transparently - they are decrypted into shared memory
+and passed to helm being deleted right after.
 
 ```
-$ helm secrets install stable/nginx --name nginx --namespace nginx --values secrets.yaml
+helm secrets install stable/mariadb --name mariadb --namespace mariadb --values secrets.yaml
 
-$ helm secrets upgrade nginx stable/nginx --values secrets.yaml
+helm secrets upgrade mariadb stable/mariadb --values secrets.yaml
 
-$ helm secrets lint stable/nginx --values secrets.yaml
+helm secrets lint stable/mariadb --values secrets.yaml
 ```
 
 Commands `enc` and `dec` offer lower level functionality to encode and decode

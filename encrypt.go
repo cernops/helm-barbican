@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-    "strings"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -19,15 +19,16 @@ import (
 
 // encryptCmd represents the 'enc' command.
 var encryptCmd = &cobra.Command{
-	Use:   "enc",
+	Use:   "enc [FILE]",
 	Short: "encrypt secrets with barbican key",
 	Long: `This command encrypts the contents of a given secrets yaml file.
 	The resulting file can then be safely committed to version control.
 	This is a low level command which most times is not required, with
 	'view' and 'edit' being preferred.`,
-	Args: cobra.ExactArgs(0),
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		content, err := ioutil.ReadFile(SecretsFile)
+		secretsFile := args[0]
+		content, err := ioutil.ReadFile(secretsFile)
 		if err != nil {
 			log.Fatalf("encrypt failed : %v", err)
 		}
@@ -39,13 +40,13 @@ var encryptCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("could not init client :: %v", err)
 		}
-		key, nonce, err := fetchKey(client, deploymentName())
+		key, nonce, err := fetchKey(client, releaseName())
 		if err != nil {
 			log.Fatalf("could not fetch key : %v", err)
 		}
 
 		result, err := encrypt(key, nonce, content)
-		err = ioutil.WriteFile(SecretsFile, result, 0644)
+		err = ioutil.WriteFile(secretsFile, result, 0644)
 		if err != nil {
 			log.Fatalf("encrypt failed : %v", err)
 		}
@@ -55,14 +56,15 @@ var encryptCmd = &cobra.Command{
 
 // decryptCmd represents the 'dec' command
 var decryptCmd = &cobra.Command{
-	Use:   "dec",
+	Use:   "dec [FILE]",
 	Short: "decrypt secrets with barbican key",
 	Long: `This command decrypts the contents of a given secrets yaml file.
 	This is a low level command which most times is not required, with 'view'
 	and 'edit' being preferred.`,
-	Args: cobra.ExactArgs(0),
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		content, err := ioutil.ReadFile(SecretsFile)
+		secretsFile := args[0]
+		content, err := ioutil.ReadFile(secretsFile)
 		if err != nil {
 			log.Fatalf("decrypt failed : %v", err)
 		}
@@ -73,7 +75,7 @@ var decryptCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("could not init client :: %v", err)
 		}
-		key, nonce, err := fetchKey(client, deploymentName())
+		key, nonce, err := fetchKey(client, releaseName())
 		if err != nil {
 			log.Fatalf("could not get key : %v", err)
 		}
@@ -81,7 +83,7 @@ var decryptCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("decrypt failed : %v", err)
 		}
-		err = ioutil.WriteFile(SecretsFile, plain, 0644)
+		err = ioutil.WriteFile(secretsFile, plain, 0644)
 		if err != nil {
 			log.Fatalf("could not write file : %v", err)
 		}
@@ -90,13 +92,14 @@ var decryptCmd = &cobra.Command{
 
 // viewCmd represents the 'view' command.
 var viewCmd = &cobra.Command{
-	Use:   "view",
+	Use:   "view [FILE]",
 	Short: "decrypt and display secrets",
 	Long: `This command decrypts the contents of a given secrets yaml file,
 	and displays them in stdout. The contents are never stored unencrypted.`,
-	Args: cobra.ExactArgs(0),
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		content, err := ioutil.ReadFile(SecretsFile)
+		secretsFile := args[0]
+		content, err := ioutil.ReadFile(secretsFile)
 		if err != nil {
 			log.Fatalf("decrypt failed : %v", err)
 		}
@@ -105,7 +108,7 @@ var viewCmd = &cobra.Command{
 			if err != nil {
 				log.Fatalf("could not init client :: %v", err)
 			}
-			key, nonce, err := fetchKey(client, deploymentName())
+			key, nonce, err := fetchKey(client, releaseName())
 			if err != nil {
 				log.Fatalf("could not get key :: %v", err)
 			}
@@ -120,22 +123,23 @@ var viewCmd = &cobra.Command{
 
 // editCmd
 var editCmd = &cobra.Command{
-	Use:   "edit",
+	Use:   "edit [FILE]",
 	Short: "edit secrets",
 	Long: `This command launches the system configured editor with the
 	contents of a given secrets yaml file. The contents are decrypted for
 	editing and encrypted on exit.`,
-	Args: cobra.ExactArgs(0),
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		secretsFile := args[0]
 		client, err := newKeyManager()
 		if err != nil {
 			log.Fatalf("could not init client :: %v", err)
 		}
-		key, nonce, err := fetchKey(client, deploymentName())
+		key, nonce, err := fetchKey(client, releaseName())
 		if err != nil {
 			log.Fatalf("could not fetch key : %v", err)
 		}
-		content, err := ioutil.ReadFile(SecretsFile)
+		content, err := ioutil.ReadFile(secretsFile)
 		if err != nil {
 			log.Fatalf("decrypt failed : %v", err)
 		}
@@ -157,7 +161,7 @@ var editCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("failed to encrypt contents : %v", err)
 		}
-		err = ioutil.WriteFile(SecretsFile, encrypted, 0600)
+		err = ioutil.WriteFile(secretsFile, encrypted, 0600)
 		if err != nil {
 			log.Fatalf("failed to encrypt : %v", err)
 		}
@@ -238,9 +242,9 @@ func b64Encoded(content string) bool {
 	return false
 }
 
-func deploymentName() string {
-	if Deployment != "" {
-		return Deployment
+func releaseName() string {
+	if Release != "" {
+		return Release
 	}
 	d, _ := os.Getwd()
 	return filepath.Base(d)
