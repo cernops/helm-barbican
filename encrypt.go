@@ -140,7 +140,7 @@ var editCmd = &cobra.Command{
 			log.Fatalf("could not fetch key : %v", err)
 		}
 		content, err := ioutil.ReadFile(secretsFile)
-		if err != nil {
+		if err != nil && !os.IsNotExist(err) {
 			log.Fatalf("decrypt failed : %v", err)
 		}
 		if b64Encoded(string(content)) {
@@ -207,6 +207,9 @@ func encrypt(b64key string, b64nonce string, payload []byte) ([]byte, error) {
 }
 
 func decrypt(b64key string, b64nonce string, b64payload string) ([]byte, error) {
+	if b64payload == "" {
+		return []byte{}, nil
+	}
 	key, err := base64.StdEncoding.DecodeString(b64key)
 	if err != nil {
 		return nil, err
