@@ -19,12 +19,12 @@ unset OS_IDENTITY_PROVIDER OS_AUTH_TYPE OS_MUTUAL_AUTH OS_PROTOCOL
 Typical usage will be `edit` to change your secrets and `view` to display them.
 
 ```
-helm secrets edit secrets.yaml
+helm --name mariadb secrets edit secrets.yaml
 param1:
   subparam2: value2
   subparam3: value3
 
-helm secrets view secrets.yaml
+helm --name mariadb secrets view secrets.yaml
 param1:
   subparam2: value2
   subparam3: value3
@@ -41,6 +41,10 @@ helm secrets upgrade mariadb stable/mariadb --values secrets.yaml
 
 helm secrets lint stable/mariadb --values secrets.yaml
 ```
+
+The key used for encryption is chosen by the `--name` parameter
+passed above. As an alternative if no param is passed, the cwd is used (but we
+recommend relying on the helm release name).
 
 Commands `enc` and `dec` offer lower level functionality to encode and decode
 the secrets.yaml file, but you should not usually need them.
