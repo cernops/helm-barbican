@@ -58,6 +58,65 @@ Available Commands:
   upgrade     wrapper for helm upgrade, decrypting secrets
   view        decrypt and display secrets
 ```
+## Kubectl plugin
+
+You can use the secrets plugin with kubectl if you install it in your PATH as kubectl-secrets.
+
+```
+mkdir -p ~/bin
+
+curl -o ~/bin/kubectl-secrets -L https://gitlab.cern.ch/helm/plugins/barbican/raw/master/barbican
+chmod +x ~/bin/kubectl-secrets
+export PATH=$PATH:$HOME/bin
+```
+
+Example usage:
+```
+cat secret.yaml 
+/0aIzAn3AAjweH3P5Zt6nY2KPdWgVTjDrFEanpU7DjGn1/d6f3mY1JYiCTUKmSsT3xYGHj0x1XS89SWflAWXF7tmNFhgd4CMBdZNmxgc/g1tDAfheM8V1EXyJsq8aPfRHavzMFBd79C2yVMfr5wcq8PAN+knCFju5sv+QIegiZhrF6Q875X76AipQtQ=
+
+kubectl get secret 
+NAME                  TYPE                                  DATA   AGE
+default-token-hjl62   kubernetes.io/service-account-token   3      6d11h
+
+export OS_TOKEN=$(openstack token issue -c id -f value)
+
+kubectl secrets view secret.yaml 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  username: YWRtaW4=
+  password: MWYyZDFlMmU2N2Rm
+
+kubectl secrets apply -f secret.yaml 
+secret/mysecret created
+
+kubectl get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-hjl62   kubernetes.io/service-account-token   3      6d11h
+mysecret              Opaque                                2      7s
+
+kubectl get secret mysecret -o yaml
+apiVersion: v1
+data:
+  password: MWYyZDFlMmU2N2Rm
+  username: YWRtaW4=
+kind: Secret
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"password":"MWYyZDFlMmU2N2Rm","username":"YWRtaW4="},"kind":"Secret","metadata":{"annotations":{},"name":"mysecret","namespace":"default"},"type":"Opaque"}
+  creationTimestamp: "2019-04-09T19:44:07Z"
+  name: mysecret
+  namespace: default
+  resourceVersion: "1137694"
+  selfLink: /api/v1/namespaces/default/secrets/mysecret
+  uid: d68e4e5d-5aff-11e9-b1ff-fa163ef4a73a
+type: Opaque
+```
 
 ## Development
 

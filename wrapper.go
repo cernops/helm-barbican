@@ -5,11 +5,48 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
+
+// installCmd wraps the kubectl 'apply' command.
+var applyCmd = &cobra.Command{
+	Use:   "apply",
+	Short: "wrapper for kubectl apply, decrypting secrets",
+	Long: `This command wraps the default kubectl apply command,
+	but decrypting any encrypted values file using Barbican. Available
+	arguments are the same as for the default command.`,
+	Args:               cobra.ArbitraryArgs,
+	DisableFlagParsing: true,
+	Run: func(cmd *cobra.Command, args []string) {
+		out, err := wrapKubectlCommand("apply", args)
+		if err != nil {
+			log.Fatalf("%v", string(out))
+		}
+		fmt.Printf(string(out))
+	},
+}
+
+// installCmd wraps the kubectl 'create' command.
+var createCmd = &cobra.Command{
+	Use:   "apply",
+	Short: "wrapper for kubectl create, decrypting secrets",
+	Long: `This command wraps the default kubectl create command,
+	but decrypting any encrypted values file using Barbican. Available
+	arguments are the same as for the default command.`,
+	Args:               cobra.ArbitraryArgs,
+	DisableFlagParsing: true,
+	Run: func(cmd *cobra.Command, args []string) {
+		out, err := wrapKubectlCommand("create", args)
+		if err != nil {
+			log.Fatalf("%v", string(out))
+		}
+		fmt.Printf(string(out))
+	},
+}
 
 // installCmd wraps the helm 'install' command.
 var installCmd = &cobra.Command{
@@ -78,11 +115,24 @@ func wrapHelmCommand(cmd string, args []string) ([]byte, error) {
 	return helmCmd.CombinedOutput()
 }
 
+func wrapKubectlCommand(cmd string, args []string) ([]byte, error) {
+	helmArgs, decryptedFiles, err := decryptSecrets(args)
+	for _, f := range decryptedFiles {
+		defer os.Remove(f)
+	}
+	if err != nil {
+		return []byte{}, err
+	}
+	fullArgs := append([]string{cmd}, helmArgs...)
+	helmCmd := exec.Command("kubectl", fullArgs...)
+	return helmCmd.CombinedOutput()
+}
+
 func decryptSecrets(args []string) ([]string, []string, error) {
 	decryptedFiles := []string{}
 	helmArgs := args
 	for i, flag := range args {
-		if flag == "--values" || flag == "-f" {
+		if flag == "--values" || flag == "-f" || flag == "--filename" {
 			if len(helmArgs) > i+1 {
 				fname := helmArgs[i+1]
 				// Move to next arg if it does not exist
@@ -131,7 +181,12 @@ func decryptSecrets(args []string) ([]string, []string, error) {
 }
 
 func init() {
-	RootCmd.AddCommand(installCmd)
-	RootCmd.AddCommand(upgradeCmd)
-	RootCmd.AddCommand(lintCmd)
+	if strings.Contains(os.Args[0], "kubectl-") {
+		RootCmd.AddCommand(applyCmd)
+		RootCmd.AddCommand(createCmd)
+	} else {
+		RootCmd.AddCommand(installCmd)
+		RootCmd.AddCommand(upgradeCmd)
+		RootCmd.AddCommand(lintCmd)
+	}
 }
