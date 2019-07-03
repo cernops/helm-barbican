@@ -12,8 +12,6 @@ Barbican is used for secret storage, first step is to get an openstack token.
 
 ```bash
 export OS_TOKEN=$(openstack token issue -c id -f value)
-export OS_AUTH_URL=https://keystone.cern.ch/v3
-unset OS_IDENTITY_PROVIDER OS_AUTH_TYPE OS_MUTUAL_AUTH OS_PROTOCOL
 ```
 
 Typical usage will be `edit` to change your secrets and `view` to display them.
