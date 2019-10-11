@@ -22,7 +22,7 @@ func newKeyManager() (*gophercloud.ServiceClient, error) {
 	}
 
 	client, err := openstack.NewKeyManagerV1(provider,
-		gophercloud.EndpointOpts{Region: os.Getenv("OS_REGION")})
+		gophercloud.EndpointOpts{Region: os.Getenv("OS_REGION_NAME")})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create key manager :: %v", err)
 	}
