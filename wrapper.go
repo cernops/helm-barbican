@@ -32,7 +32,7 @@ var applyCmd = &cobra.Command{
 
 // installCmd wraps the kubectl 'create' command.
 var createCmd = &cobra.Command{
-	Use:   "apply",
+	Use:   "create",
 	Short: "wrapper for kubectl create, decrypting secrets",
 	Long: `This command wraps the default kubectl create command,
 	but decrypting any encrypted values file using Barbican. Available
