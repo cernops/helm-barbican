@@ -102,6 +102,24 @@ var lintCmd = &cobra.Command{
 	},
 }
 
+// templateCmd wraps the helm 'template' command.
+var templateCmd = &cobra.Command{
+	Use:   "template",
+	Short: "wrapper for helm template, decrypting secrets",
+	Long: `This command wraps the default helm template command,
+	but decrypting any encrypted values file using Barbican. Available
+	arguments are the same as for the default command.`,
+	Args:               cobra.ArbitraryArgs,
+	DisableFlagParsing: true,
+	Run: func(cmd *cobra.Command, args []string) {
+		out, err := wrapHelmCommand("template", args)
+		if err != nil {
+			log.Fatalf("%v", string(out))
+		}
+		fmt.Printf(string(out))
+	},
+}
+
 func wrapHelmCommand(cmd string, args []string) ([]byte, error) {
 	helmArgs, decryptedFiles, err := decryptSecrets(args)
 	for _, f := range decryptedFiles {
@@ -188,5 +206,6 @@ func init() {
 		RootCmd.AddCommand(installCmd)
 		RootCmd.AddCommand(upgradeCmd)
 		RootCmd.AddCommand(lintCmd)
+		RootCmd.AddCommand(templateCmd)
 	}
 }
