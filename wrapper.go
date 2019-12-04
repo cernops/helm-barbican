@@ -121,6 +121,16 @@ var templateCmd = &cobra.Command{
 }
 
 func wrapHelmCommand(cmd string, args []string) ([]byte, error) {
+	for i, flag := range args {
+		if i == len(args)-1 {
+			// Last arg, can't possibly be --name and value remaining
+			break
+		}
+
+		if flag == "--name" || flag == "-n" {
+			Release = args[i+1]
+		}
+	}
 	helmArgs, decryptedFiles, err := decryptSecrets(args)
 	for _, f := range decryptedFiles {
 		defer os.Remove(f)
