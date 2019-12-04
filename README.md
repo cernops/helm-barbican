@@ -55,6 +55,7 @@ Available Commands:
   help        Help about any command
   install     wrapper for helm install, decrypting secrets
   lint        wrapper for helm lint, decrypting secrets
+  template    wrapper for helm template, decrypting secrets
   upgrade     wrapper for helm upgrade, decrypting secrets
   view        decrypt and display secrets
 ```
