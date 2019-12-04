@@ -84,7 +84,7 @@ var upgradeCmd = &cobra.Command{
 	},
 }
 
-// lintCmd represents the 'lint' command.
+// lintCmd wraps the helm 'lint' command.
 var lintCmd = &cobra.Command{
 	Use:   "lint",
 	Short: "wrapper for helm lint, decrypting secrets",
