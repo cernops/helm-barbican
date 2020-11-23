@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -185,22 +184,15 @@ func decryptSecrets(args []string) ([]string, []string, error) {
 				if err != nil {
 					return helmArgs, decryptedFiles, err
 				}
-				// Store decrypted contents in a shm file
-				uuid, err := uuid.NewRandom()
-				if err != nil {
-					return helmArgs, decryptedFiles, err
-				}
-				tmpf := fmt.Sprintf("/dev/shm/%v", uuid)
+				// Store decrypted contents in a tmp file
+				f, err := ioutil.TempFile("", "*.helm")
+				tmpf := f.Name()
 				decryptedFiles = append(decryptedFiles, tmpf)
-				_, err = os.OpenFile(tmpf, os.O_RDWR|os.O_CREATE, 0600)
+				_, err = f.Write(plain)
 				if err != nil {
 					return helmArgs, decryptedFiles, err
 				}
-				err = ioutil.WriteFile(tmpf, plain, 0644)
-				if err != nil {
-					return helmArgs, decryptedFiles, err
-				}
-				// Update args to access the decrypt shm file instead
+				// Update args to access the decrypt tmp file instead
 				helmArgs[i+1] = tmpf
 			}
 		}
